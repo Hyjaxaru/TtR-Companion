@@ -32,7 +32,11 @@ class TtRAppModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // --- Public, game list related methods ---
+  // --- Public methods for game management ---
+
+  TtRGame getGameByID(String id) {
+    return games.firstWhere((game) => game.id == id);
+  }
 
   void addGame(TtRGame newGame) {
     games.add(newGame);
@@ -40,7 +44,7 @@ class TtRAppModel extends ChangeNotifier {
   }
 
   void removeGame(String id) {
-    games.removeWhere((game) => identical(game.id, id));
+    games.removeWhere((game) => game.id == id);
     _saveToStorage();
   }
 
@@ -52,10 +56,30 @@ class TtRAppModel extends ChangeNotifier {
     }
   }
 
+  void updateGameByID(String id, TtRGame updatedGame) {
+    final index = games.indexWhere((game) => game.id == id);
+    if (index != -1) {
+      games[index] = updatedGame;
+      _saveToStorage();
+    }
+  }
+
   void clearAll() {
     games = [];
     _saveToStorage();
   }
 
-  // --- Public, game specific methods ---
+  // --- Public methods for player management methods
+
+  void gameAddPlayer(String gameID, Player player) {
+    final game = getGameByID(gameID);
+    game.players.add(player);
+    updateGame(game);
+  }
+
+  void gameRemovePlayer(String gameID, Player player) {
+    final game = getGameByID(gameID);
+    game.players.removeWhere((item) => item.id == player.id);
+    updateGame(game);
+  }
 }

@@ -6,6 +6,8 @@ Future<void> main() async {
   // initialise storage
   await GetStorage.init();
 
+  //GetStorage().erase();
+
   // run the app
   runApp(const TtRApp());
 }

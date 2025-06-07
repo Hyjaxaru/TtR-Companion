@@ -34,7 +34,7 @@ class GameAction {
     required int pointsAwarded,
     String? notes,
   }) => GameAction(
-    id: Uuid().toString(),
+    id: Uuid().v4().toString(),
     playerID: playerID,
     action: action,
     pointsAwarded: pointsAwarded,

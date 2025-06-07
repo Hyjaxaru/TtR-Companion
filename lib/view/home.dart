@@ -26,6 +26,8 @@ class TtRHome extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final List<TtRGame> games = watchIt<TtRAppModel>().games; // watchPropertyValue((TtRAppModel m) => m.games);
+    final ongoing = games.where((game) => game.ended == null).toList();
+    final history = games.where((game) => game.ended != null).toList();
     return Scaffold(
       backgroundColor: ColorScheme.of(context).surfaceContainer,
       floatingActionButton: FloatingActionButton.large(
@@ -63,29 +65,83 @@ class TtRHome extends WatchingWidget {
                 ),
               ),
             ),
+          
+          // SliverList.builder(
+          //   itemCount: games.length,
+          //   itemBuilder: (context, index) {
+          //     final game = games[index];
+          //     return GroupedListContainer(
+          //       length: games.length,
+          //       itemIndex: index,
+          //       child: ListTile(
+          //         title: Text(game.name),
+          //         subtitle: Text(game.ended != null ? 'Played ${timeago.format(game.ended!)}' : 'Ongoing'),
+          //         leading: Icon(game.icon),
+          //         trailing: Icon(game.ended == null ? Icons.arrow_forward : Icons.more_vert),
+          //         onTap: () => game.ended == null
+          //             ? Navigator.of(context).push(
+          //               MaterialPageRoute(builder: (context) => GameView(game.id))
+          //             )
+          //             : {} 
+          //       ),
+          //     );
+          //   }
+          // ),
 
+          // List of ongoing games, including the hero bar
           SliverList.builder(
-            itemCount: games.length,
+            itemCount: ongoing.length,
             itemBuilder: (context, index) {
-              //if (index==0 && games.first.ended == null) { return SizedBox(); }
-              final game = games[index];
+              final game = ongoing[index];
               return GroupedListContainer(
-                length: games.length,
+                length: ongoing.length,
                 itemIndex: index,
                 child: ListTile(
                   title: Text(game.name),
-                  subtitle: Text(game.ended != null ? 'Played ${timeago.format(game.ended!)}' : 'Ongoing'),
+                  subtitle: Text('Ongoing'),
                   leading: Icon(game.icon),
-                  trailing: Icon(game.ended == null ? Icons.arrow_forward : Icons.more_vert),
-                  onTap: () => game.ended == null
-                      ? Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => GameView(game.id))
-                      )
-                      : {} 
+                  trailing: Icon(Icons.arrow_forward),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => GameView(game.id))
+                  ),
                 ),
               );
             }
           ),
+
+          // list of previous games that have ended
+          SliverToBoxAdapter(
+            child: GroupedListHeader('History')
+          ),
+          if (history.isEmpty)
+            SliverToBoxAdapter(
+              child: GroupedListContainer(
+                length: 1,
+                itemIndex: 0,
+                child: GroupedListTile(
+                  title: Text('No history'),
+                  leading: Icon(Icons.question_mark),
+                )
+              ),
+            ),
+          if (history.isEmpty)
+            SliverList.builder(
+              itemCount: history.length,
+              itemBuilder: (context, index) {
+                final game = history[index];
+                return GroupedListContainer(
+                  length: history.length,
+                  itemIndex: index,
+                  child: GroupedListTile(
+                    title: Text(game.name),
+                    subtitle: Text('Played ${timeago.format(game.ended!)}'),
+                    leading: Icon(game.icon),
+                    trailing: Icon(Icons.more_vert),
+                    onTap: () {}
+                  ),
+                );
+              }
+            ),
         ],
       )
     );

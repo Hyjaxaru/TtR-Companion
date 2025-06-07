@@ -35,7 +35,7 @@ class Player {
     required Color color,
     required int score
   }) => Player(
-    id: Uuid().toString(),
+    id: Uuid().v4().toString(),
     name: name,
     color: color,
     score: score
@@ -43,12 +43,12 @@ class Player {
 
   /// Creates a new [Player] from the previous, with the given changes
   Player copyWith({
-    String? uuid,
+    String? id,
     String? name,
     Color? color,
     int? score,
   }) => Player(
-    id: uuid ?? this.id,
+    id: id ?? this.id,
     name: name ?? this.name,
     color: color ?? this.color,
     score: score ?? this.score,
@@ -60,11 +60,11 @@ class Player {
   factory Player.fromMap(Map<String, dynamic> map) => Player(
     id: map['id'],
     name: map['name'],
-    color: Color.fromARGB(
-      map['color'][0],
-      map['color'][1],
-      map['color'][2],
-      map['color'][3],
+    color: Color.from(
+      alpha: map['color'][0],
+      red: map['color'][1],
+      green: map['color'][2],
+      blue: map['color'][3],
     ),
     score: map['score'],
   );

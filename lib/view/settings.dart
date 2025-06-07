@@ -7,8 +7,18 @@ import 'package:watch_it/watch_it.dart';
 class SettingsView extends WatchingWidget {
   const SettingsView({super.key});
 
+  static const Widget _devIcon = Tooltip(
+    message: 'Under Construction',
+    child: Icon(Icons.construction_rounded)
+  );
+
   @override
   Widget build(BuildContext context) {
+    final appThemeMode =
+      watchPropertyValue((SettingsModel m) => m.appThemeMode);
+    final useDeviceColorScheme =
+      watchPropertyValue((SettingsModel m) => m.useDeviceColorScheme);
+
     return Scaffold(
       backgroundColor: ColorScheme.of(context).surfaceContainer,
       body: CustomScrollView(
@@ -24,9 +34,12 @@ class SettingsView extends WatchingWidget {
             children: [
               GroupedListTile(
                 title: const Text('Theme Mode'),
-                leading: const Icon(Icons.brightness_auto_rounded),
+                leading: const Icon(
+
+                  Icons.brightness_auto_rounded
+                ),
                 trailing: DropdownButton<String>(
-                  value: watchPropertyValue((SettingsModel m) => m.appThemeMode),
+                  value: appThemeMode,
                   hint: const Text('Select Theme'),
                   onChanged: (value) => di<SettingsModel>().appThemeMode = value!,
                   items: const <DropdownMenuItem<String>>[
@@ -46,19 +59,42 @@ class SettingsView extends WatchingWidget {
                 ),
               ),
               
-              if (Platform.isAndroid)
+              if (Platform.isAndroid || useDeviceColorScheme)
                 GroupedListTile(
                   title: const Text('Use Device Colours'),
                   subtitle: const Text('Use your device\'s colour palette'),
                   leading: Icon(
                     Icons.palette_rounded,
-                    color: ColorScheme.of(context).primary
+                    color: useDeviceColorScheme ? ColorScheme.of(context).primary : null
                   ),
                   trailing: Switch(
-                    value: watchPropertyValue((SettingsModel m) => m.useDeviceColorScheme),
-                    onChanged: (value) => di<SettingsModel>().useDeviceColorScheme = value,
+                    value: useDeviceColorScheme,
+                    onChanged: (value) => di<SettingsModel>().useDeviceColorScheme = Platform.isAndroid && value,
                   ),
                 ),
+              
+              GroupedListTile(
+                enabled: !useDeviceColorScheme,
+                title: const Text('Theme Colour'),
+                subtitle: useDeviceColorScheme
+                    ? const Text('Following your device settings')
+                    : const Text('Choose a theme colour that the app will follow'),
+                leading: Icon(
+                  Icons.palette_rounded,
+                  color: !useDeviceColorScheme ? ColorScheme.of(context).primary : null
+                ),
+                trailing: _devIcon,
+              ),
+
+              GroupedListTile(
+                title: const Text('Colour Style'),
+                subtitle: const Text('Choose the colour scheme style'),
+                leading: Icon(
+                  Icons.palette_rounded,
+                  color: ColorScheme.of(context).tertiary
+                ),
+                trailing: _devIcon,
+              ),
             ]
           ),
 
@@ -72,13 +108,13 @@ class SettingsView extends WatchingWidget {
                 ),
                 subtitle: const Text('Delete all your previous games'),
                 leading: Icon(Icons.delete_rounded, color: ColorScheme.of(context).error),
-                trailing: const Icon(Icons.arrow_forward_rounded),
+                trailing: _devIcon,
               ),
 
               GroupedListTile(
                 title: const Text('Reset Settings'),
                 leading: Icon(Icons.restore_rounded, color: ColorScheme.of(context).error),
-                trailing: const Icon(Icons.arrow_forward_rounded),
+                trailing: _devIcon,
               ),
             ]
           ),
@@ -88,14 +124,14 @@ class SettingsView extends WatchingWidget {
             children: [
               GroupedListTile(
                 title: const Text('TtR Companion'),
-                subtitle: const Text('v0.1-alpha'),
+                subtitle: const Text('development'),
                 leading: const Icon(Icons.info_rounded),
                 trailing: const Icon(Icons.arrow_forward_rounded),
                 onTap: () => showAboutDialog(
                   context: context,
                   applicationIcon: FlutterLogo(),
                   applicationName: 'TtR Companion',
-                  applicationVersion: 'v0.1-alpha',
+                  applicationVersion: 'development',
                   children: [
                     Text('For the love of the game!'),
                     Text('Open Source')
@@ -107,7 +143,7 @@ class SettingsView extends WatchingWidget {
                 title: const Text('Contribute'),
                 subtitle: const Text('Help make this app better!'),
                 leading: const Icon(Icons.commit),
-                trailing: const Icon(Icons.open_in_new_rounded),
+                trailing: _devIcon
               ),
             ]
           ),

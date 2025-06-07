@@ -58,7 +58,7 @@ class TtRGame {
     String? winnerID,
     required List<GameAction> actions,
   }) => TtRGame(
-    id: Uuid().toString(),
+    id: Uuid().v4().toString(),
     name: name,
     icon: icon,
     started: started,

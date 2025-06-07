@@ -1,16 +1,26 @@
-# flutter_to_ride
+# TtR Companion
 
-A simple, yet elegant Ticket to Ride companion app.
+A fun littke companion app for the hit board-game 'Ticket to Ride'
+
+It's not perfect, by any means, but it (should) do what it's designed to do.
+
+> [!NOTE]
+> This project is not done!
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Right now, this app is not available on any platform, as it is still in development
 
-A few resources to get you started if this is your first Flutter project:
+To run the app in the ios simulator, for example, simply clone the repository, and run with flutter!
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+git clone [TODO: add repo url here]
+cd flutter_to_ride
+flutter run
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Contributing
+
+Feel free to make pull requests if there's something you want to add or change
+
+(Please note that this is my first project where i've endorced this. Feel free to correct me if i get anything wrong) :]

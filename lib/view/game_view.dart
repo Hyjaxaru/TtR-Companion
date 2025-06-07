@@ -36,8 +36,7 @@ class GameView extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<TtRGame> games = watchPropertyValue((TtRAppModel m) => m.games);
-    final TtRGame game = games.where((item) => identical(item.id, gameID)).first;
+    final TtRGame game =watchIt<TtRAppModel>().games.firstWhere((game) => game.id == gameID);
     return Scaffold(
       backgroundColor: ColorScheme.of(context).surfaceContainer,
       body: CustomScrollView(
@@ -69,30 +68,40 @@ class GameView extends WatchingWidget {
           ),
 
           SliverGroupedList(
-            children: List.generate(game.players.length+1, (index) {       
-              if (index >= game.players.length) {
+            children: List.generate(
+              game.players.length < 5 ? game.players.length+1 : game.players.length, (index) {       
+                if (index >= game.players.length && game.players.length < 5) {
+                  return GroupedListTile(
+                    title: Text('Add Player'),
+                    leading: Icon(Icons.add),
+                    onTap: () => di<TtRAppModel>().gameAddPlayer(
+                      gameID,
+                      Player.autoID(
+                        name: 'Player $index',
+                        color: Colors.blue,
+                        score: 0
+                      )
+                    ) 
+                  );
+                }
+                final player = game.players[index];
                 return GroupedListTile(
-                  title: Text('Add Player'),
-                  leading: Icon(Icons.add),
-                  // onTap: () => game.addPlayer(
-                  //   Player.autoID(
-                  //     name: 'Player $index',
-                  //     color: Colors.blue,
-                  //     score: 0
-                  //   )
-                  // ) 
+                  title: Text(player.name),
+                  subtitle: Text('${player.score} points'),
+                  leading: Icon(
+                    Icons.person_rounded,
+                    color: player.color,
+                  ),
+                  trailing: IconButton(
+                    onPressed: () => di<TtRAppModel>().gameRemovePlayer(
+                      gameID,
+                      player
+                    ),
+                    icon: Icon(Icons.remove_rounded)
+                  ),
                 );
               }
-              final player = game.players[index];
-              return GroupedListTile(
-                title: Text(player.name),
-                subtitle: Text('${player.score} points'),
-                leading: Icon(
-                  Icons.person_rounded,
-                  color: player.color,
-                ),
-              );
-            }),
+            ),
           ),
         ],
       )
